@@ -7,7 +7,7 @@ from tkinter import scrolledtext
 from tkinter import Menu  
 from tkinter import Spinbox  
 from tkinter import messagebox as mBox
-from tkinter.ttk import Treeview
+from tkinter.ttk import Style,Treeview 
 from tkinter import filedialog
 import aug_util as aug
 import wv_util as wv
@@ -86,33 +86,54 @@ tabControl.pack(expand=1, fill="both")  # Pack to make visible"""
   
 #---------------Tab1控件介绍------------------#  
 # We are creating a container tab3 to hold all other widgets  
+
+s = Style()
+btnimg1=ImageTk.PhotoImage(Image.open("GTbutton.png"))
+s.configure('GT.TButton', padding=6, relief="flat",image=btnimg1)
+btnimg2=ImageTk.PhotoImage(Image.open("Rbutton.png"))
+s.configure('R.TButton', padding=6, relief="flat",image=btnimg2)
+btnimg3=ImageTk.PhotoImage(Image.open("GTbutton_press.png"))
+s.configure('GT_press.TButton', padding=6, relief="flat",image=btnimg3)
+btnimg4=ImageTk.PhotoImage(Image.open("Rbutton_press.png"))
+s.configure('R_press.TButton', padding=6, relief="flat",image=btnimg4)
+bgimg=ImageTk.PhotoImage(Image.open("background.jpg"))
+s.configure('bg.TFrame',image=bgimg)
+
+
+
+
 root = ttk.Frame()  
-root.grid(column=0, row=0, padx=8, pady=4)  
+root.grid(column=10, row=10, padx=8, pady=4)  
 
 filename = "5.tif"
 filepath = "5.tif"
  
 # Modified Button Click Function  
 def clickGT():
-    global GTflag,Rflag
+    global GTflag
     if GTflag==0:
         GTflag=1
+        buttonGT.configure(style='GT_press.TButton')
+        
     else:
         GTflag=0
+        buttonGT.configure(style='GT.TButton')
+    
     changeImage()  
     #action1.configure(text='Hello\n ' + confidence.get())  
     #action1.configure(state='disabled')    # Disable the Button Widget  
 def clickR():
-    global GTflag,Rflag
+    global Rflag
     if Rflag==0:
         Rflag=1
+        buttonR.configure(style='R_press.TButton')
     else:
         Rflag=0
+        buttonR.configure(style='R.TButton')
     changeImage()
     #action1.configure(text='Hello\n ' + confidence.get())  
     #action1.configure(state='disabled')    # Disable the Button Widget
 def changeImage():
-    global GTflag,Rflag,filepath
     changeName=""
     if GTflag==1 and Rflag==1:
         changeName="blend.tif"
@@ -135,7 +156,6 @@ confidence = tk.StringVar()
 confidenceEntry = ttk.Entry(root, width=6, textvariable=confidence)  
 confidenceEntry.grid(column=3, row=0, sticky='W')
 def confidenceEnter(event):
-    global confidence
     scr.insert(tk.INSERT, confidence.get() + '\n')
 confidenceEntry.bind('<Return>',confidenceEnter)  
 #圖片
@@ -146,9 +166,10 @@ imgLabel.grid(column=0, row=1,columnspan=4,rowspan=2, sticky='W')
 #按鈕
 GTflag=0
 Rflag=0 
-buttonGT = ttk.Button(root,text="GroundTruth",command=clickGT)     
+
+buttonGT = ttk.Button(root,command=clickGT,style='GT.TButton')     
 buttonGT.grid(column=4,row=0)  
-buttonR = ttk.Button(root,text="Training result",command=clickR)     
+buttonR = ttk.Button(root,command=clickR,style='R.TButton')     
 buttonR.grid(column=6,row=0)  
 #buttonIntersection = ttk.Button(root,text="Intersection",command=clickMe)     
 #buttonIntersection.grid(column=6,row=0)
