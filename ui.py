@@ -148,7 +148,7 @@ def changeImage():
     imgLabel.image = img
 
 #圖名
-fileNameLabel=ttk.Label(root, text=filename)
+fileNameLabel=ttk.Label(root, text="檔案名稱 : " + filename)
 fileNameLabel.grid(column=0, row=0,columnspan=2,sticky='W')
 #信心  
 ttk.Label(root, text="confidence :").grid(column=2, row=0,sticky='W')
@@ -170,22 +170,38 @@ Rflag=0
 buttonGT = ttk.Button(root,command=clickGT,style='GT.TButton')     
 buttonGT.grid(column=4,row=0)  
 buttonR = ttk.Button(root,command=clickR,style='R.TButton')     
-buttonR.grid(column=6,row=0)  
+buttonR.grid(column=5,row=0)  
 #buttonIntersection = ttk.Button(root,text="Intersection",command=clickMe)     
 #buttonIntersection.grid(column=6,row=0)
 # Using a scrolled Text control      
 scrolW  = 30; scrolH  =  5  
 scr = scrolledtext.ScrolledText(root, wrap=tk.WORD)  
-scr.grid(column=4, row=1, sticky='WN', columnspan=3)
+scr.grid(column=4, row=1, sticky='WN', columnspan=2)
 #直方圖
-hist = ImageTk.PhotoImage(Image.open("5.tif").resize((550,300),Image.ANTIALIAS))
-ttk.Label(root, image=hist).grid(column=4, row=2,columnspan=3, sticky='W')    
+tabControl = ttk.Notebook(root)          # Create Tab Control  
+  
+tab1 = ttk.Frame(tabControl)            # Create a tab   
+tabControl.add(tab1, text='第一頁')      # Add the tab  
+  
+tab2 = ttk.Frame(tabControl)            # Add a second tab  
+tabControl.add(tab2, text='第二頁')      # Make second tab visible  
+  
+tab3 = ttk.Frame(tabControl)            # Add a third tab  
+tabControl.add(tab3, text='第三頁')      # Make second tab visible  
+  
+tabControl.grid(column=4,row=2,columnspan=2,sticky='NW')  # Pack to make visible"""
+hist1 = ImageTk.PhotoImage(Image.open("groundtruth.tif").resize((550,300),Image.ANTIALIAS))
+ttk.Label(tab1, image=hist1).grid(column=0,row=0,sticky='NW')  
+hist2 = ImageTk.PhotoImage(Image.open("blend.tif").resize((550,300),Image.ANTIALIAS))
+ttk.Label(tab2, image=hist2).grid(column=0,row=0,sticky='NW')  
+hist3 = ImageTk.PhotoImage(Image.open("predict.tif").resize((550,300),Image.ANTIALIAS))
+ttk.Label(tab3, image=hist3).grid(column=0,row=0,sticky='NW')    
 
 #滚动条
 
 scrollBar = tk.Scrollbar(root)
 
-scrollBar.grid(column=7,row=1,rowspan=2,sticky='E')
+scrollBar.grid(column=6,row=1,rowspan=2,sticky='E')
 
 #Treeview组件，6列，显示表头，带垂直滚动条
 
@@ -227,7 +243,7 @@ tree.heading('c5', text='?')
 
 tree.heading('c6', text='??')
 
-tree.grid(column=7,row=1,rowspan=2,sticky='NSEW')
+tree.grid(column=6,row=1,rowspan=2,sticky='NSEW')
 
 #Treeview组件与垂直滚动条结合
 
