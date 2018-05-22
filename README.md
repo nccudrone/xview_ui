@@ -1,5 +1,5 @@
-## xView Data Utilities
-
-This repository contains data processing scripts for the xView dataset.  The script 'process_wv.py' is runnable and processes a folder containing xView imagery along with a groundtruth geojson file to create a TFRecord containing shuffled, chipped, and augmented xView patches in JPEG format.  We provide several augmentation functions in 'aug_util.py' for rotating and shifting images and bounding boxes, as well as noise injecting techniques like salt-and-pepper and gaussian blurring.  Additionally in 'wv_util.py' we provide several functions for loading, processing, and chipping xView data.
-
-The Jupyter Notebook provided in this repository interactively illustrates an example xView processing pipeline using the provided utility functions.
+##xview介面設計
+資料來源:http://xviewdataset.org/
+服用說明:
+1.自行下載"xView_train.geojson"檔案
+2.UI開啟檔案(5.tif)後依據訓練結果(predictions.txt)生成3張標記圖片(prdict.tif/groundtruth.tif/blend.tif)
