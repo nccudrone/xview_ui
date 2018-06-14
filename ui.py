@@ -122,7 +122,7 @@ def clickGT():
         GTflag=0
         buttonGT.configure(style='GT.TButton')
     
-    changeImage() 
+    change() 
     #action1.configure(text='Hello\n ' + confidence.get())  
     #action1.configure(state='disabled')    # Disable the Button Widget  
 def clickR():
@@ -133,10 +133,10 @@ def clickR():
     else:
         Rflag=0
         buttonR.configure(style='R.TButton')
-    changeImage()
+    change()
     #action1.configure(text='Hello\n ' + confidence.get())  
     #action1.configure(state='disabled')    # Disable the Button Widget
-def changeImage():
+def change():
     
     if GTflag==1 and Rflag==1:
         imgGT=groundtruth.show_coords(filename,[],1)
@@ -162,7 +162,11 @@ confidence.set('0')
 confidenceEntry = ttk.Entry(root, width=6, textvariable=confidence)  
 confidenceEntry.grid(column=3, row=0, sticky='W')
 def confidenceEnter(event):
-    changeImage()
+    tree.delete(*tree.get_children())
+    count=training_result.stat(filename,float(confidence.get()))
+    for i in range(len(count)):
+        tree.insert('', i, values=[str(count[i][0]),str(count[i][1]),str(count[i][2]),str(count[i][3]),str(count[i][4])])
+    change()
 confidenceEntry.bind('<Return>',confidenceEnter)  
 #圖片
 
@@ -195,12 +199,12 @@ tab3 = ttk.Frame(tabControl)            # Add a third tab
 tabControl.add(tab3, text='信心分佈圖')      # Make second tab visible  
  
 tabControl.grid(column=4,row=2,columnspan=2,sticky='NWES')  # Pack to make visible
-hist1 = ImageTk.PhotoImage(Image.open("class.png").resize((525,350),Image.ANTIALIAS))
-ttk.Label(tab1, image=hist1).grid(column=0,row=0,sticky='NWES')  
-hist2 = ImageTk.PhotoImage(Image.open("area.png").resize((525,350),Image.ANTIALIAS))
-ttk.Label(tab2, image=hist2).grid(column=0,row=0,sticky='NWES')  
-hist3 = ImageTk.PhotoImage(Image.open("confidence.png").resize((525,350),Image.ANTIALIAS))
-ttk.Label(tab3, image=hist3).grid(column=0,row=0,sticky='NWES')    
+hist1=ttk.Label(tab1)
+hist1.grid(column=0,row=0,sticky='NWES')  
+hist2=ttk.Label(tab2)
+hist2.grid(column=0,row=0,sticky='NWES')  
+hist3=ttk.Label(tab3)
+hist3.grid(column=0,row=0,sticky='NWES')    
 
 #滚动条
 
@@ -403,16 +407,27 @@ def _quit():
     exit()  
 def _open():
     global filepath
-    img2 = ImageTk.PhotoImage(Image.open(filepath).resize((650,650),Image.ANTIALIAS))
-    imgLabel.configure(image=img2)
-    imgLabel.image = img2
+    img = ImageTk.PhotoImage(Image.open(filepath).resize((650,650),Image.ANTIALIAS))
+    imgLabel.configure(image=img)
+    imgLabel.image = img
     fileNameLabel.configure(text="檔案名稱 : " + filename)
     #print(filename)
     groundtruth.load_json()
-    training_result.load_txt()
+    training_result.load_txt(filename)
+    training_result.plot_bar(filename)
     
+    h1 = ImageTk.PhotoImage(Image.open("class.png").resize((525,350),Image.ANTIALIAS))
+    h2 = ImageTk.PhotoImage(Image.open("area.png").resize((525,350),Image.ANTIALIAS))
+    h3 = ImageTk.PhotoImage(Image.open("confidence.png").resize((525,350),Image.ANTIALIAS))
+    hist1.configure(image=h1)
+    hist2.configure(image=h2)
+    hist3.configure(image=h3)
+    hist1.image = h1
+    hist2.image = h2
+    hist3.image = h3
+    
+    count=training_result.stat_data
     for i in range(len(count)):
-
         tree.insert('', i, values=[str(count[i][0]),str(count[i][1]),str(count[i][2]),str(count[i][3]),str(count[i][4])])
 """
     dlg = win32ui.CreateFileDialog(1) # 1表示打开文件对话框

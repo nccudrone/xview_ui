@@ -60,6 +60,8 @@ class Dataset():
         self.confs=np.array(confs)
         self.classes=np.array(classes)
         self.chips=np.array(chips)
+        self.stat(chip_name)
+        self.stat_data= self.stat(chip_name)
         print('loading finished!')
             
     def get_image(self,chip_name=None):
@@ -68,27 +70,28 @@ class Dataset():
             
         self.image=np.array(Image.open(chip_name))
         
-    def stat(self,chip_name=None):
+    def stat(self,chip_name=None,confidence=0):
         if chip_name==None:
             chip_name=self.chips[0]
-        C=self.classes[self.chips==chip_name]
-        A=self.areas[self.chips==chip_name]
-        self.stat_data=[]
+        C=self.classes[np.logical_and(self.chips==chip_name, self.confs>=confidence)]
+        A=self.areas[np.logical_and(self.chips==chip_name, self.confs>=confidence)]
+        stat_data=[]
         x=0
         for i in np.unique(C):
-            self.stat_data.append([])
-            self.stat_data[x].append(i)
+            stat_data.append([])
+            stat_data[x].append(i)
             
-            self.stat_data[x].append(C.tolist().count(i))
+            stat_data[x].append(C.tolist().count(i))
             classArea=[]
             for j in range(len(C)):
                 if i == C[j]:
                     classArea.append(A[j])
-            self.stat_data[x].append(max(classArea))
-            self.stat_data[x].append(min(classArea))
-            self.stat_data[x].append(round(sum(classArea) / float(len(classArea)),2))
+            stat_data[x].append(max(classArea))
+            stat_data[x].append(min(classArea))
+            stat_data[x].append(round(sum(classArea) / float(len(classArea)),2))
             x=x+1
-            
+        return stat_data
+
     def plot_bar(self,chip_name=None):
         if chip_name==None:
             chip_name=self.chips[0]
