@@ -15,8 +15,8 @@ import rectangle as rect
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
-import xView_Processing as xp
-
+import Dataset
+import time
 from PIL import ImageTk, Image  
   
 #由于tkinter中没有ToolTip功能，所以自定义这个功能如下  
@@ -59,7 +59,8 @@ def createToolTip( widget, text):
         toolTip.hidetip()  
     widget.bind('<Enter>', enter)  
     widget.bind('<Leave>', leave)  
-  
+groundtruth=Dataset.Dataset()
+training_result=Dataset.Dataset()  
 # Create instance  
 win = tk.Tk()     
   
@@ -96,8 +97,7 @@ btnimg3=ImageTk.PhotoImage(Image.open("GTbutton_press.png"))
 s.configure('GT_press.TButton', padding=6, relief="flat",image=btnimg3)
 btnimg4=ImageTk.PhotoImage(Image.open("Rbutton_press.png"))
 s.configure('R_press.TButton', padding=6, relief="flat",image=btnimg4)
-bgimg=ImageTk.PhotoImage(Image.open("background.jpg"))
-s.configure('bg.TFrame',image=bgimg)
+
 
 
 
@@ -108,6 +108,9 @@ root.grid(column=10, row=10, padx=8, pady=4)
 filename = "5.tif"
 filepath = "5.tif"
  
+GTflag=0
+Rflag=0 
+
 # Modified Button Click Function  
 def clickGT():
     global GTflag
@@ -119,7 +122,7 @@ def clickGT():
         GTflag=0
         buttonGT.configure(style='GT.TButton')
     
-    changeImage()  
+    changeImage() 
     #action1.configure(text='Hello\n ' + confidence.get())  
     #action1.configure(state='disabled')    # Disable the Button Widget  
 def clickR():
@@ -134,38 +137,40 @@ def clickR():
     #action1.configure(text='Hello\n ' + confidence.get())  
     #action1.configure(state='disabled')    # Disable the Button Widget
 def changeImage():
-    changeName=""
+    
     if GTflag==1 and Rflag==1:
-        changeName="blend.tif"
+        imgGT=groundtruth.show_coords(filename,[],1)
+        imgR=training_result.show_coords(filename,[],2,float(confidence.get()))
+        img=Image.blend(imgGT,imgR,0.3)
     elif GTflag==1 and Rflag==0:
-        changeName="groundtruth.tif"
+        img=groundtruth.show_coords(filename,[],1)
     elif GTflag==0 and Rflag==1:
-        changeName="predict.tif"
+        img=training_result.show_coords(filename,[],2,float(confidence.get()))
     else:
-        changeName=filepath
-    img = ImageTk.PhotoImage(Image.open(changeName).resize((650,650),Image.ANTIALIAS))
-    imgLabel.configure(image=img)
-    imgLabel.image = img
+        img = Image.open(filepath)
+    img_output = ImageTk.PhotoImage(img.resize((650,650),Image.ANTIALIAS))
+    imgLabel.configure(image=img_output)
+    imgLabel.image = img_output
 
 #圖名
-fileNameLabel=ttk.Label(root, text="檔案名稱 : " + filename)
+fileNameLabel=ttk.Label(root)
 fileNameLabel.grid(column=0, row=0,columnspan=2,sticky='W')
 #信心  
 ttk.Label(root, text="confidence :").grid(column=2, row=0,sticky='W')
-confidence = tk.StringVar()  
+confidence = tk.StringVar()
+confidence.set('0')  
 confidenceEntry = ttk.Entry(root, width=6, textvariable=confidence)  
 confidenceEntry.grid(column=3, row=0, sticky='W')
 def confidenceEnter(event):
-    scr.insert(tk.INSERT, confidence.get() + '\n')
+    changeImage()
 confidenceEntry.bind('<Return>',confidenceEnter)  
 #圖片
 
-img = ImageTk.PhotoImage(Image.open(filepath).resize((650,650),Image.ANTIALIAS))
-imgLabel=ttk.Label(root, image=img)
+
+imgLabel=ttk.Label(root)
 imgLabel.grid(column=0, row=1,columnspan=4,rowspan=2, sticky='W')
 #按鈕
-GTflag=0
-Rflag=0 
+
 
 buttonGT = ttk.Button(root,command=clickGT,style='GT.TButton')     
 buttonGT.grid(column=4,row=0)  
@@ -174,28 +179,28 @@ buttonR.grid(column=5,row=0)
 #buttonIntersection = ttk.Button(root,text="Intersection",command=clickMe)     
 #buttonIntersection.grid(column=6,row=0)
 # Using a scrolled Text control      
-scrolW  = 30; scrolH  =  5  
-scr = scrolledtext.ScrolledText(root, wrap=tk.WORD)  
+scrolW  = 75; scrolH  =  20  
+scr = scrolledtext.ScrolledText(root, wrap=tk.WORD,width=scrolW,height=scrolH)  
 scr.grid(column=4, row=1, sticky='WN', columnspan=2)
 #直方圖
 tabControl = ttk.Notebook(root)          # Create Tab Control  
   
 tab1 = ttk.Frame(tabControl)            # Create a tab   
-tabControl.add(tab1, text='第一頁')      # Add the tab  
+tabControl.add(tab1, text='類別數量分佈圖')      # Add the tab  
   
 tab2 = ttk.Frame(tabControl)            # Add a second tab  
-tabControl.add(tab2, text='第二頁')      # Make second tab visible  
+tabControl.add(tab2, text='面積大小分佈圖')      # Make second tab visible  
   
 tab3 = ttk.Frame(tabControl)            # Add a third tab  
-tabControl.add(tab3, text='第三頁')      # Make second tab visible  
-  
-tabControl.grid(column=4,row=2,columnspan=2,sticky='NW')  # Pack to make visible"""
-hist1 = ImageTk.PhotoImage(Image.open("groundtruth.tif").resize((550,300),Image.ANTIALIAS))
-ttk.Label(tab1, image=hist1).grid(column=0,row=0,sticky='NW')  
-hist2 = ImageTk.PhotoImage(Image.open("blend.tif").resize((550,300),Image.ANTIALIAS))
-ttk.Label(tab2, image=hist2).grid(column=0,row=0,sticky='NW')  
-hist3 = ImageTk.PhotoImage(Image.open("predict.tif").resize((550,300),Image.ANTIALIAS))
-ttk.Label(tab3, image=hist3).grid(column=0,row=0,sticky='NW')    
+tabControl.add(tab3, text='信心分佈圖')      # Make second tab visible  
+ 
+tabControl.grid(column=4,row=2,columnspan=2,sticky='NWES')  # Pack to make visible
+hist1 = ImageTk.PhotoImage(Image.open("class.png").resize((525,350),Image.ANTIALIAS))
+ttk.Label(tab1, image=hist1).grid(column=0,row=0,sticky='NWES')  
+hist2 = ImageTk.PhotoImage(Image.open("area.png").resize((525,350),Image.ANTIALIAS))
+ttk.Label(tab2, image=hist2).grid(column=0,row=0,sticky='NWES')  
+hist3 = ImageTk.PhotoImage(Image.open("confidence.png").resize((525,350),Image.ANTIALIAS))
+ttk.Label(tab3, image=hist3).grid(column=0,row=0,sticky='NWES')    
 
 #滚动条
 
@@ -209,7 +214,7 @@ tree = Treeview(root,
 
                           columns=('c1', 'c2', 'c3',
 
-                                           'c4', 'c5', 'c6'),
+                                           'c4', 'c5'),
 
                           show="headings",
 
@@ -217,31 +222,29 @@ tree = Treeview(root,
 
 #设置每列宽度和对齐方式
 
-tree.column('c1', width=70, anchor='center')
+tree.column('c1', width=40, anchor='center')
 
-tree.column('c2', width=40, anchor='center')
+tree.column('c2', width=50, anchor='center')
 
-tree.column('c3', width=40, anchor='center')
+tree.column('c3', width=60, anchor='center')
 
-tree.column('c4', width=120, anchor='center')
+tree.column('c4', width=60, anchor='center')
 
-tree.column('c5', width=100, anchor='center')
+tree.column('c5', width=150, anchor='center')
 
-tree.column('c6', width=90, anchor='center')
 
 #设置每列表头标题文本
 
 tree.heading('c1', text='Type')
 
-tree.heading('c2', text='Min')
+tree.heading('c2', text='sample')
 
 tree.heading('c3', text='Max')
 
-tree.heading('c4', text='Average')
+tree.heading('c4', text='Min')
 
-tree.heading('c5', text='?')
+tree.heading('c5', text='Average')
 
-tree.heading('c6', text='??')
 
 tree.grid(column=6,row=1,rowspan=2,sticky='NSEW')
 
@@ -256,9 +259,7 @@ def treeviewClick(event):
     pass
 
 tree.bind('<Button-1>', treeviewClick)
-for i in range(100):
 
-    tree.insert('', i, values=[str(i)]*6)
 """
 # Adding a Combobox  
 book = tk.StringVar()  
@@ -402,22 +403,25 @@ def _quit():
     exit()  
 def _open():
     global filepath
-    filepath=filedialog.askopenfilename()
     img2 = ImageTk.PhotoImage(Image.open(filepath).resize((650,650),Image.ANTIALIAS))
     imgLabel.configure(image=img2)
     imgLabel.image = img2
-    filename=filepath.split("/")[-1]
-    fileNameLabel.configure(text=filename)
+    fileNameLabel.configure(text="檔案名稱 : " + filename)
     #print(filename)
-    xp.image_execute(filename)
+    groundtruth.load_json()
+    training_result.load_txt()
     
-    
-    """dlg = win32ui.CreateFileDialog(1) # 1表示打开文件对话框
+    for i in range(len(count)):
+
+        tree.insert('', i, values=[str(count[i][0]),str(count[i][1]),str(count[i][2]),str(count[i][3]),str(count[i][4])])
+"""
+    dlg = win32ui.CreateFileDialog(1) # 1表示打开文件对话框
     dlg.SetOFNInitialDir('E:/Python') # 设置打开文件对话框中的初始显示目录
     dlg.DoModal()
  
     filename = dlg.GetPathName() # 获取选择的文件名称
-    print (filename)"""      
+    print (filename)
+"""  
 # Creating a Menu Bar  
 menuBar = Menu(win)  
 win.config(menu=menuBar)  
@@ -429,7 +433,7 @@ fileMenu.add_separator()
 fileMenu.add_command(label="Exit", command=_quit)  
 menuBar.add_cascade(label="File", menu=fileMenu)  
   
-  
+"""  
 # Display a Message Box  
 def _msgBox1():  
     mBox.showinfo('Python Message Info Box', '通知：程序运行正常！')  
@@ -445,6 +449,7 @@ def _msgBox4():
         mBox.showinfo('显示选择结果', '您选择了“否”，谢谢参与！')  
   
 # Add another Menu to the Menu Bar and an item  
+
 msgMenu = Menu(menuBar, tearoff=0)  
 msgMenu.add_command(label="通知 Box", command=_msgBox1)  
 msgMenu.add_command(label="警告 Box", command=_msgBox2)  
@@ -452,6 +457,7 @@ msgMenu.add_command(label="错误 Box", command=_msgBox3)
 msgMenu.add_separator()  
 msgMenu.add_command(label="判断对话框", command=_msgBox4)  
 menuBar.add_cascade(label="Info", menu=msgMenu)  
+"""
 #----------------菜单栏介绍-------------------#  
   
   
