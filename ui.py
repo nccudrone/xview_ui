@@ -259,8 +259,8 @@ scrollBar.config(command=tree.yview)
 #定义并绑定Treeview组件的鼠标单击事件
 
 def treeviewClick(event):
-
-    pass
+    item=tree.selection()[0]
+    print(tree.item(item,"text"))
 
 tree.bind('<Button-1>', treeviewClick)
 
@@ -429,6 +429,7 @@ def _open():
     count=training_result.stat_data
     for i in range(len(count)):
         tree.insert('', i, values=[str(count[i][0]),str(count[i][1]),str(count[i][2]),str(count[i][3]),str(count[i][4])])
+    print("done")
 """
     dlg = win32ui.CreateFileDialog(1) # 1表示打开文件对话框
     dlg.SetOFNInitialDir('E:/Python') # 设置打开文件对话框中的初始显示目录
