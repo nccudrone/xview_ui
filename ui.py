@@ -187,8 +187,7 @@ buttonR.grid(column=5,row=0)
 scrolW  = 75; scrolH  =  20  
 scr = scrolledtext.ScrolledText(root, wrap=tk.WORD,width=scrolW,height=scrolH)  
 scr.grid(column=4, row=1, sticky='WN', columnspan=2)
-textscore = score.score('./predictions/','xView_train.geojson','./output')
-scr.insert(tk.INSERT,textscore)
+
 #直方圖
 tabControl = ttk.Notebook(root)          # Create Tab Control  
   
@@ -263,11 +262,13 @@ scrollBar.config(command=tree.yview)
 
 def treeviewClick(event):
     for item in tree.selection():
-        item_tag = tree.item(item,"tags")
         item_value = tree.item(item,"values")
-        tree.item(item,tags=1)
-        print(item_value)
-        print(item_tag)
+        cls_i=int(item_value[0])
+        if(cls_i in selected):
+            selected.remove(cls_i)
+        else:
+            selected.append(cls_i)
+        change()
 
 tree.bind('<ButtonRelease-1>', treeviewClick)
 
@@ -303,11 +304,11 @@ spin2.grid(column=1, row=2,sticky='W')
 # Add Tooltip  
 #createToolTip(spin,       '这是一个Spinbox.')  
 #createToolTip(spin2,      '这是一个Spinbox.')  
-createToolTip(buttonGT,     '紅色部分.')
-createToolTip(buttonR,'綠色部分')  
-createToolTip(confidenceEntry,'輸入0到1.')  
+#createToolTip(buttonGT,     '紅色部分.')
+#createToolTip(buttonR,'綠色部分')  
+#createToolTip(confidenceEntry,'輸入0到1.')  
 #createToolTip(bookChosen, '这是一个Combobox.')  
-createToolTip(scr,        '这是一个ScrolledText.')  
+#createToolTip(scr,        '这是一个ScrolledText.')  
   
 # 一次性控制各控件之间的距离  
 for child in root.winfo_children():   
@@ -432,10 +433,13 @@ def _open():
     hist1.image = h1
     hist2.image = h2
     hist3.image = h3
-    
+    textscore = score.score('./predictions/','xView_train.geojson','./output')
+    for line in textscore: 
+        scr.insert(tk.INSERT,line)
+
     count=training_result.stat_data
     for i in range(len(count)):
-        tree.insert('', i, values=[str(count[i][0]),str(count[i][1]),str(count[i][2]),str(count[i][3]),str(count[i][4])],tags=0)
+        tree.insert('', i, values=[str(count[i][0]),str(count[i][1]),str(count[i][2]),str(count[i][3]),str(count[i][4])])
     
 """
     dlg = win32ui.CreateFileDialog(1) # 1表示打开文件对话框

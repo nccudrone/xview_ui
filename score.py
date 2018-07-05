@@ -246,14 +246,16 @@ def score(path_predictions, path_groundtruth, path_output, iou_threshold = .5):
         (vals['map'],vals['map_score'],vals['mar_score'],vals['f1']))
 
     with open(path_output + '/score.txt','w') as f:
-        f.write(str("%.8f" % vals['map']))
+        f.write(str("%.4f" % vals['map']))
 
+    result=[]
     with open(path_output + '/metrics.txt','w') as f:
         for key in vals.keys():
-            f.write("%s %f\n" % (str(key),vals[key]) )
-
+            f.write("%s %.4f\n" % (str(key),vals[key]) )
+            result.append(str(key)+" "+str(round(float(vals[key]),4))+"\n")
+    result=sorted(result)
     print("Final time: %s" % str(time.time() - ttime))
-    return str(vals['map'])
+    return result
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
