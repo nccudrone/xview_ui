@@ -18,7 +18,8 @@ import csv
 import Dataset
 import time
 from PIL import ImageTk, Image  
-  
+import score
+
 #由于tkinter中没有ToolTip功能，所以自定义这个功能如下  
 class ToolTip(object):  
     def __init__(self, widget):  
