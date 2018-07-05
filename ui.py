@@ -110,7 +110,7 @@ filepath = "5.tif"
  
 GTflag=0
 Rflag=0 
-
+selected=[]
 # Modified Button Click Function  
 def clickGT():
     global GTflag
@@ -139,13 +139,13 @@ def clickR():
 def change():
     
     if GTflag==1 and Rflag==1:
-        imgGT=groundtruth.show_coords(filename,[],1)
-        imgR=training_result.show_coords(filename,[],2,float(confidence.get()))
+        imgGT=groundtruth.show_coords(filename,selected,1)
+        imgR=training_result.show_coords(filename,selected,2,float(confidence.get()))
         img=Image.blend(imgGT,imgR,0.3)
     elif GTflag==1 and Rflag==0:
-        img=groundtruth.show_coords(filename,[],1)
+        img=groundtruth.show_coords(filename,selected,1)
     elif GTflag==0 and Rflag==1:
-        img=training_result.show_coords(filename,[],2,float(confidence.get()))
+        img=training_result.show_coords(filename,selected,2,float(confidence.get()))
     else:
         img = Image.open(filepath)
     img_output = ImageTk.PhotoImage(img.resize((650,650),Image.ANTIALIAS))
@@ -259,10 +259,14 @@ scrollBar.config(command=tree.yview)
 #定义并绑定Treeview组件的鼠标单击事件
 
 def treeviewClick(event):
-    item=tree.selection()[0]
-    print(tree.item(item,"text"))
+    for item in tree.selection():
+        item_tag = tree.item(item,"tags")
+        item_value = tree.item(item,"values")
+        tree.item(item,tags=1)
+        print(item_value)
+        print(item_tag)
 
-tree.bind('<Button-1>', treeviewClick)
+tree.bind('<ButtonRelease-1>', treeviewClick)
 
 """
 # Adding a Combobox  
@@ -428,8 +432,8 @@ def _open():
     
     count=training_result.stat_data
     for i in range(len(count)):
-        tree.insert('', i, values=[str(count[i][0]),str(count[i][1]),str(count[i][2]),str(count[i][3]),str(count[i][4])])
-    print("done")
+        tree.insert('', i, values=[str(count[i][0]),str(count[i][1]),str(count[i][2]),str(count[i][3]),str(count[i][4])],tags=0)
+    
 """
     dlg = win32ui.CreateFileDialog(1) # 1表示打开文件对话框
     dlg.SetOFNInitialDir('E:/Python') # 设置打开文件对话框中的初始显示目录
