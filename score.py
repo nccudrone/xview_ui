@@ -253,6 +253,7 @@ def score(path_predictions, path_groundtruth, path_output, iou_threshold = .5):
             f.write("%s %f\n" % (str(key),vals[key]) )
 
     print("Final time: %s" % str(time.time() - ttime))
+    return str(vals['map'])
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

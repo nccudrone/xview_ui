@@ -187,6 +187,8 @@ buttonR.grid(column=5,row=0)
 scrolW  = 75; scrolH  =  20  
 scr = scrolledtext.ScrolledText(root, wrap=tk.WORD,width=scrolW,height=scrolH)  
 scr.grid(column=4, row=1, sticky='WN', columnspan=2)
+textscore = score.score('./predictions/','xView_train.geojson','./output')
+scr.insert(tk.INSERT,textscore)
 #直方圖
 tabControl = ttk.Notebook(root)          # Create Tab Control  
   
