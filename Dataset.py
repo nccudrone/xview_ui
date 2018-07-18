@@ -39,7 +39,7 @@ class Dataset():
     def load_txt(self,chip_name="5.tif"):
         print('loading training result into memory...')
         coords,areas,chips,classes,confs = [],[],[],[],[]
-        f = open("35.tif.txt")
+        f = open("5.tif.txt")
         lines = f.readlines()
         for i in range(len(lines)):
             lines[i]=lines[i].split()

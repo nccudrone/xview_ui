@@ -19,6 +19,7 @@ import Dataset
 import time
 from PIL import ImageTk, Image  
 import score
+import ZOOM
 
 #由于tkinter中没有ToolTip功能，所以自定义这个功能如下  
 class ToolTip(object):  
@@ -106,8 +107,8 @@ s.configure('R_press.TButton', padding=6, relief="flat",image=btnimg4)
 root = ttk.Frame()  
 root.grid(column=10, row=10, padx=8, pady=4)  
 
-filename = "35.tif"
-filepath = "35.tif"
+filename = "5.tif"
+filepath = "5.tif"
  
 GTflag=0
 Rflag=0 
@@ -172,21 +173,21 @@ confidenceEntry.bind('<Return>',confidenceEnter)
 #圖片
 
 
-imgLabel=ttk.Label(root)
+imgLabel=ZOOM.Zoom(root,'5.tif')
 imgLabel.grid(column=0, row=1,columnspan=4,rowspan=2, sticky='W')
 #按鈕
 
 
 buttonGT = ttk.Button(root,command=clickGT,style='GT.TButton')     
-buttonGT.grid(column=4,row=0)  
+buttonGT.grid(column=5,row=0)  
 buttonR = ttk.Button(root,command=clickR,style='R.TButton')     
-buttonR.grid(column=5,row=0)  
+buttonR.grid(column=6,row=0)  
 #buttonIntersection = ttk.Button(root,text="Intersection",command=clickMe)     
 #buttonIntersection.grid(column=6,row=0)
 # Using a scrolled Text control      
 scrolW  = 75; scrolH  =  20  
 scr = scrolledtext.ScrolledText(root, wrap=tk.WORD,width=scrolW,height=scrolH)  
-scr.grid(column=4, row=1, sticky='WN', columnspan=2)
+scr.grid(column=5, row=1, sticky='WN', columnspan=2)
 
 #直方圖
 tabControl = ttk.Notebook(root)          # Create Tab Control  
@@ -200,7 +201,7 @@ tabControl.add(tab2, text='面積大小分佈圖')      # Make second tab visibl
 tab3 = ttk.Frame(tabControl)            # Add a third tab  
 tabControl.add(tab3, text='信心分佈圖')      # Make second tab visible  
  
-tabControl.grid(column=4,row=2,columnspan=2,sticky='NWES')  # Pack to make visible
+tabControl.grid(column=5,row=2,columnspan=2,sticky='NWES')  # Pack to make visible
 hist1=ttk.Label(tab1)
 hist1.grid(column=0,row=0,sticky='NWES')  
 hist2=ttk.Label(tab2)
@@ -212,7 +213,7 @@ hist3.grid(column=0,row=0,sticky='NWES')
 
 scrollBar = tk.Scrollbar(root)
 
-scrollBar.grid(column=6,row=1,rowspan=2,sticky='E')
+scrollBar.grid(column=7,row=1,rowspan=2,sticky='E')
 
 #Treeview组件，6列，显示表头，带垂直滚动条
 
@@ -252,7 +253,7 @@ tree.heading('c4', text='Min')
 tree.heading('c5', text='Average')
 
 
-tree.grid(column=6,row=1,rowspan=2,sticky='NSEW')
+tree.grid(column=7,row=1,rowspan=2,sticky='NSEW')
 
 #Treeview组件与垂直滚动条结合
 
