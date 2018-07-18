@@ -99,7 +99,7 @@ def ap_from_pr(p,r):
 
     return ap
 
-def score(path_predictions, path_groundtruth, path_output, iou_threshold = .5):
+def score(path_predictions, path_groundtruth, path_output, iou_threshold = .4):
   
     assert (iou_threshold < 1 and iou_threshold > 0)
 

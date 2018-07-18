@@ -106,8 +106,8 @@ s.configure('R_press.TButton', padding=6, relief="flat",image=btnimg4)
 root = ttk.Frame()  
 root.grid(column=10, row=10, padx=8, pady=4)  
 
-filename = "5.tif"
-filepath = "5.tif"
+filename = "35.tif"
+filepath = "35.tif"
  
 GTflag=0
 Rflag=0 
