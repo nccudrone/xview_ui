@@ -173,8 +173,8 @@ confidenceEntry.bind('<Return>',confidenceEnter)
 #圖片
 
 
-imgLabel=ZOOM.Zoom(root,'5.tif')
-imgLabel.grid(column=0, row=1,columnspan=4,rowspan=2, sticky='W')
+imgLabel=ZOOM.Zoom(root)
+
 #按鈕
 
 
@@ -416,10 +416,12 @@ def _quit():
     exit()  
 def _open():
     global filepath
-    img = ImageTk.PhotoImage(Image.open(filepath).resize((650,650),Image.ANTIALIAS))
-    imgLabel.configure(image=img)
-    imgLabel.image = img
+    imgLabel.open_image(filepath)
+    #img = ImageTk.PhotoImage(Image.open(filepath).resize((650,650),Image.ANTIALIAS))
+    #imgLabel.configure(image=img)
+    #imgLabel.image = img
     fileNameLabel.configure(text="檔案名稱 : " + filename)
+
     #print(filename)
     groundtruth.load_json()
     training_result.load_txt(filename)

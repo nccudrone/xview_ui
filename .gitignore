@@ -4,3 +4,6 @@ background.jpg
 *.pyc
 *.png
 *.ipynb
+*.tif
+output/metrics.txt
+output/score.txt
