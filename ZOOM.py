@@ -11,10 +11,7 @@ class AutoScrollbar(ttk.Scrollbar):
     ''' A scrollbar that hides itself if it's not needed.
         Works only if you use the grid geometry manager '''
     def set(self, lo, hi):
-        if float(lo) <= 0.0 and float(hi) >= 1.0:
-            self.grid_remove()
-        else:
-            self.grid()
+        self.grid()
         ttk.Scrollbar.set(self, lo, hi)
 
     def pack(self, **kw):
@@ -36,6 +33,7 @@ class Zoom(ttk.Frame):
         hbar.grid(row=3, column=0, columnspan=4 ,sticky='we')
         # Open image
         self.image = Image.open(path)
+        self.image = self.image.resize((650,650), Image.ANTIALIAS)
         # Create canvas and put image on it
         self.canvas = tk.Canvas(self.master, highlightthickness=0,
                                 xscrollcommand=hbar.set, yscrollcommand=vbar.set,width=650, height=650)
@@ -57,16 +55,9 @@ class Zoom(ttk.Frame):
         self.delta = 0.75
         width, height = self.image.size
         minsize, maxsize = 5, 20
-        for n in range(10):
-            x0 = random.randint(0, width - maxsize)
-            y0 = random.randint(0, height - maxsize)
-            x1 = x0 + random.randint(minsize, maxsize)
-            y1 = y0 + random.randint(minsize, maxsize)
-            color = ('red', 'orange', 'yellow', 'green', 'blue')[random.randint(0, 4)]
-            self.canvas.create_rectangle(x0, y0, x1, y1, outline='black', fill=color,
-                                         activefill='black', tags=n)
+        
         # Text is used to set proper coordinates to the image. You can make it invisible.
-        self.text = self.canvas.create_text(0, 0, anchor='nw', text='Scroll to zoom')
+        self.text = self.canvas.create_text(0, 0, anchor='nw', text=' ')
         self.show_image()
         self.canvas.configure(scrollregion=self.canvas.bbox('all'))
 
@@ -84,7 +75,8 @@ class Zoom(ttk.Frame):
         # Respond to Linux (event.num) or Windows (event.delta) wheel event
         if event.num == 5 or event.delta == -120:
             scale        *= self.delta
-            self.imscale *= self.delta
+            if self.imscale > 1.0:
+                self.imscale *= self.delta
         if event.num == 4 or event.delta == 120:
             scale        /= self.delta
             self.imscale /= self.delta
@@ -103,6 +95,7 @@ class Zoom(ttk.Frame):
             self.canvas.imagetk = None  # delete previous image from the canvas
         width, height = self.image.size
         new_size = int(self.imscale * width), int(self.imscale * height)
+
         imagetk = ImageTk.PhotoImage(self.image.resize(new_size))
         # Use self.text object to set proper coordinates
         self.imageid = self.canvas.create_image(self.canvas.coords(self.text),
