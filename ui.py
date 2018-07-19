@@ -150,9 +150,11 @@ def change():
         img=training_result.show_coords(filename,selected,2,float(confidence.get()))
     else:
         img = Image.open(filepath)
-    img_output = ImageTk.PhotoImage(img.resize((650,650),Image.ANTIALIAS))
-    imgLabel.configure(image=img_output)
-    imgLabel.image = img_output
+    minsize=min(img.size)
+    img=img.resize((minsize,minsize), Image.ANTIALIAS)
+    imgLabel.image= img
+    imgLabel.show_image()
+    
 
 #圖名
 fileNameLabel=ttk.Label(root)

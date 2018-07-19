@@ -54,7 +54,7 @@ class Zoom(ttk.Frame):
         self.delta = 0.75
         width, height = self.image.size
         # Text is used to set proper coordinates to the image. You can make it invisible.
-        self.text = self.canvas.create_text(0, 0, anchor='nw', text='Scroll to zoom')
+        self.text = self.canvas.create_text(0, 0, anchor='nw', text=' ')
         self.show_image()
         self.canvas.configure(scrollregion=self.canvas.bbox('all'))
 
@@ -72,7 +72,8 @@ class Zoom(ttk.Frame):
         # Respond to Linux (event.num) or Windows (event.delta) wheel event
         if event.num == 5 or event.delta == -120:
             scale        *= self.delta
-            self.imscale *= self.delta
+            if self.imscale > 650.0/min(self.image.size):
+                self.imscale *= self.delta
         if event.num == 4 or event.delta == 120:
             scale        /= self.delta
             self.imscale /= self.delta
@@ -84,6 +85,11 @@ class Zoom(ttk.Frame):
         self.canvas.configure(scrollregion=self.canvas.bbox('all'))
     def open_image(self,filename):
         self.image=Image.open(filename)
+        minsize=min(self.image.size)
+        self.image=self.image.resize((minsize,minsize), Image.ANTIALIAS)
+        print(minsize)
+        print(self.image.size)
+        self.imscale=650.0/minsize
         self.show_image()
     def show_image(self):
         ''' Show image on the Canvas '''
